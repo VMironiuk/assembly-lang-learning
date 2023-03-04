@@ -5,11 +5,11 @@
 ;     nasm -f macho64 hello.asm && ld -macosx_version_min 10.12 -L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lSystem -o hello hello.o && ./hello
 ;----------------------------------------------------------------------------------------------------------------------
 
-default rel                          ; will make all [] memory operands prefer RIP-relative addressing
-global _main
+default rel                          ; use relative addressing
+global _main                         ; must be declared global for linker to find it
 
-section .text
-_main:
+section .text                        ; code section
+_main:                               ; must be declared _main for linker to find it
     mov     rax, 0x2000004           ; system call for write
     mov     rdi, 1                   ; file descriptor 1 is stdout
     lea     rsi, [msg]               ; address of string to output (replace `mov rsi, msg` with this)
@@ -19,6 +19,6 @@ _main:
     mov     rdi, 0                   ; exit code 0
     syscall                          ; invoke operating system to exit
 
-section .data
+section .data                        ; data section
 msg:    db      "Hello, world!", 10  ; 10 is the newline character
 .len:   equ     $ - msg              ; length of string, for use by `mov rdx, msg.len`
